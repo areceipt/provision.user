@@ -1,0 +1,2 @@
+user: "deploy"
+home: "/home/{{user}}"
