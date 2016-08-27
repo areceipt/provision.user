@@ -1,5 +1,17 @@
 galaxy_info:
   author: Marat Khustnetdinov
-  description: provision user
+  description: Ansible role witch provisions user for production enviroment
+  galaxy_tags:
+    - system
+    - user
+    - production
+  platforms:
+  - name: Ubuntu
+    versions:
+    - all
+  categories:
+  - system
   license: MIT
   min_ansible_version: 1.8
+
+dependencies: []
