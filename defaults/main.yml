@@ -1,2 +1,4 @@
-user: "deploy"
-home: "/home/{{user}}"
+---
+
+provision_user_name: deploy
+provision_user_ssh_key: id_rsa

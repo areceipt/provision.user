@@ -1,41 +1,61 @@
 # Provision.user
 [![Galaxy](https://img.shields.io/badge/galaxy-provision.user-blue.svg?style=flat-square)](https://galaxy.ansible.com/khusnetdinov/provision.user/)
 
-This is ansible receipt for creating deploy user for linux (Ubuntu). It also is used in other [provision receipt](https://github.com/khusnetdinov/provisioner) for prepare production enviroment on server.
+This receipt creates `user` for deployment and managing operations on Ubuntu server.
 
-It creates user, copies SSH key, sets nopasswd permissions. 
+## What it does?
 
-#### Variables
+ Under root user it:
+ 
+ * Creates user
+ 
+ * Gets ssh key from local machine and puts to server user authorized_keys
+ 
+ * Grant user sudo without password permissions
+ 
+ * Restrict password login, allow only SSH connection
+ 
+ * Restrict root login
 
-```yaml
-user: deploy             # The name of deploy user 
-home: '/home/{{ user }}'  # The home folder for user
+## Files structure
+
+```
+├── /defaults/                  # Default variables for playbook
+│   └── main.yml                # Variables for playbook
+├── /meta/                      # Meta
+│   └── main.yml                # Ansible Galaxy meta information
+├── /tasks/                     # Play tasks
+│   └── main.yml                # User provision task
+│── README.md                   # Project description
+│── hosts                       # Inventory file
+└── playbook.yml                # Playbook file
 ```
 
-#### Usage
+## Usage
 
-Add `provision.user` to your roles and set vars in your vars file or playbook file.
-
-requirements file:
+#### Set Variables
 
 ```yaml
-- src: "https://github.com/areceipt/provision.user"
-  name: user
+  # defaults/main.yml
+ 
+  # User name on remote server
+  provision_user_name: deploy
+  # SSH key file name on local machine
+  provision_user_ssh_key: id_rsa
 ```
 
-vars_file:
+#### Set provision hosts
 
-```yaml
-deploy_user: deploy
-deploy_user_home: "/home/{{ deploy_user }}"
+```ini
+# hosts
+
+[provision]
+# Set you hosts
+0.0.0.0
 ```
 
-playbook:
+#### Run provision
 
-```yaml
-- hosts: all
-  roles:
-    - role: user
-      user: "{{ deploy_user }}"
-      home: "{{ deploy_user_home }}"
+```bash
+$ ansible-playbook playbook.yml -i hosts -vvv
 ```

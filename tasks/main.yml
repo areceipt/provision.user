@@ -1,15 +1,66 @@
-- name: "users | create"
-  user: name={{ user }} shell=/bin/bash
+---
 
-- name: "users | copy authorized key"
-  shell: "mkdir -p {{ home }}/.ssh -m 700 && cp /root/.ssh/authorized_keys {{ home }}/.ssh && chown -R {{ user }}:{{ user }} {{ home }}/.ssh"
+- name: "Provision: Create User"
+  user:
+    name: "{{ provision_user_name }}"
 
-- name: 'users | nopasswd'
-  shell: "gpasswd -a {{ user }} sudo"
+- name: "Provision: Set Authorized keys taken from .ssh"
+  authorized_key:
+    user: "{{ provision_user_name }}"
+    state: present
+    key: "{{ lookup('file', '~/.ssh/{{ provision_user_ssh_key }}.pub') }}"
 
-- name: "users | touch permissions"
-  file: path=/etc/sudoers.d/{{ user }} state=touch
+- name: "Provision: Create Local Sudoers"
+  file:
+    path: /etc/sudoers.d/{{ provision_user_name }}
+    state: touch
 
-- name: "users | write permissions"
-  lineinfile: dest=/etc/sudoers.d/{{ user }} state=present regexp="^" line="deploy ALL=(ALL) NOPASSWD:ALL"
+- name: "Provision: Grant Sudo Permissions"
+  lineinfile:
+    dest: /etc/sudoers.d/{{ provision_user_name }}
+    state: present
+    regexp: "^"
+    line: "{{ provision_user_name }} ALL=(ALL) NOPASSWD:ALL"
+    validate: "visudo -cf %s"
 
+- name: "Provision: Set AuthenticationMethods"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?AuthenticationMethods'
+    line: 'AuthenticationMethods publickey'
+
+- name: "Provision: Set ChallengeResponseAuthentication"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?ChallengeResponseAuthentication'
+    line: 'ChallengeResponseAuthentication no'
+
+- name: "Provision: Set PasswordAuthentication"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+
+- name: "Provision: Set PermitEmptyPasswords"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?PermitEmptyPasswords'
+    line: 'PermitEmptyPasswords no'
+
+- name: "Provision: Set PubkeyAuthentication"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?PubkeyAuthentication'
+    line: 'PubkeyAuthentication yes'
+
+- name: "Provision: Set PermitRootLogin"
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin'
+    line: 'PermitRootLogin no'
+
+- name: "Provision: Set Root Nologin"
+  lineinfile:
+    dest: /etc/passwd
+    regexp: '^#?root:x:0:0:root:/root:/bin/bash'
+    line: 'root:x:0:0:root:/root:/usr/sbin/nologin'
