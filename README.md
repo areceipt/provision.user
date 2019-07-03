@@ -20,15 +20,15 @@ This receipt creates `user` for deployment and managing operations on Ubuntu ser
 ## Files structure
 
 ```
-├── /defaults/                  # Default variables for playbook
-│   └── main.yml                # Variables for playbook
-├── /meta/                      # Meta
-│   └── main.yml                # Ansible Galaxy meta information
-├── /tasks/                     # Play tasks
-│   └── main.yml                # User provision task
-│── README.md                   # Project description
-│── hosts                       # Inventory file
-└── playbook.yml                # Playbook file
+  ├── /defaults/                  # Default variables for playbook
+  │   └── main.yml                # Variables for playbook
+  ├── /meta/                      # Meta
+  │   └── main.yml                # Ansible Galaxy meta information
+  ├── /tasks/                     # Play tasks
+  │   └── main.yml                # User provision task
+  │── README.md                   # Project description
+  │── hosts                       # Inventory file
+  └── playbook.yml                # Playbook file
 ```
 
 ## Usage
@@ -47,15 +47,15 @@ This receipt creates `user` for deployment and managing operations on Ubuntu ser
 #### Set provision hosts
 
 ```ini
-# hosts
+  # hosts
 
-[provision]
-# Set you hosts
-0.0.0.0
+  [provision]
+  # Set you hosts
+  0.0.0.0
 ```
 
 #### Run provision
 
 ```bash
-$ ansible-playbook playbook.yml -i hosts -vvv
+  $ ansible-playbook playbook.yml -i hosts -vvv
 ```
